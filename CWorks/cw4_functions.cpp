@@ -38,6 +38,7 @@ std::string RestoreOriginalText(const std::string& text, int substring_size)
     }
 
     std::string result = text;
+    //restore strings
 
     return result;
 }
