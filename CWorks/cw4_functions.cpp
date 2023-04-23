@@ -7,7 +7,7 @@ std::string FindAndReplace(const std::string& text, int substring_size)
 {
     std::vector<std::string> substrings{};
 
-    for (size_t i = 0; i < text.length(); i++)  // find all substrings longer than substring_size
+    for (size_t i = 0; i < text.length(); i++)  // find all substrings longer than substring size
     {
         for (size_t j = substring_size; j < text.length() - i + 1; j++)
         {
@@ -27,7 +27,7 @@ std::string RestoreOriginalText(const std::string& text, int substring_size)
 {
     std::vector<std::string> substrings{};
 
-    for (size_t i = 0; i < text.length(); i++)  // find all substrings longer than substring_size
+    for (size_t i = 0; i < text.length(); i++)  // find all substrings longer than substring size
     {
         for (size_t j = substring_size; j < text.length() - i + 1; j++)
         {
