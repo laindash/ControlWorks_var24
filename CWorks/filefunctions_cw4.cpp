@@ -65,15 +65,15 @@ std::string CheckFileCW4()
     return path;
 }
 
-void GetStringsFromFile(std::vector<std::string>& strings, std::string& path)
+void GetTextFromFile(std::string& text, std::string& path)
 {
     std::ifstream file(path);
-    std::string text{};
+    std::string input{};
 
     while (!file.eof())
     {
-        GetLine(file, text, WITH_DIGITS, FILE_INPUT);
-        strings.push_back(text);
+        GetLine(file, input, WITH_DIGITS, FILE_INPUT);
+        text += input;
     }
 
     std::cout << "Текст загружен!" << std::endl;

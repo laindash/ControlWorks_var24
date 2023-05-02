@@ -333,7 +333,9 @@ void StartCW4(void)
     {
         std::vector<std::string> strings{};
         std::vector<std::string> changedStrings{};
-        int substring_size{};
+        bool textIsModified = false, isSubstringSizeSetted = false;
+        std::string text{};
+        int substring_size = 2;
         std::string file_path{};
         UnitTestCW4 tests{};
 
@@ -344,11 +346,11 @@ void StartCW4(void)
         {
             case FILE_INPUT:
                 file_path = CheckFileCW4();
-                GetStringsFromFile(strings, file_path);
+                GetTextFromFile(text, file_path);
                 break;
 
             case MANUAL_INPUT:
-                FillStrings(strings);
+                InputText(text);
                 break;
 
             case MODUL_TESTS:
@@ -359,6 +361,8 @@ void StartCW4(void)
                 break;
         }
 
+        CheckText(text, textIsModified);
+
         while (user_choice != QUIT && user_choice != MODUL_TESTS)
         {
             ShowMenuCW4();
@@ -366,14 +370,25 @@ void StartCW4(void)
             {
                 case ENTRY_LENGTH:
                     SetSubstringSize(substring_size);
-                    StartModify(strings, changedStrings, substring_size);
+                    isSubstringSizeSetted = true;
                     break;
 
                 case SHOW_RESTORED:
+                    if (strings.empty())
+                        StartRestore(text, strings);
                     ShowRestored(strings);
                     break;
 
                 case SHOW_MODIFIED:
+                    if (!changedStrings.empty())
+                    {
+                        if (!isSubstringSizeSetted)
+                        {
+                            std::cout << "–азмер подстроки вз€т со стандартным значением = 2" << std::endl;
+                            StartModify(text, changedStrings, substring_size);
+                            textIsModified = true;
+                        }
+                    }
                     ShowModified(changedStrings);
                     break;
 
