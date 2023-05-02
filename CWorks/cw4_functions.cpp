@@ -34,7 +34,11 @@ void StartModify(std::vector<std::string>& strings, std::vector<std::string>& ch
 		MakeListOfSubstrings(substrings, text);
 		FormatText(text, substrings, substring_size);
 	}
-	
+	else
+	{
+		for (std::vector<std::string>::iterator it = changedStrings.begin(); it != changedStrings.end(); it++)
+			std::cout << *it << std::endl;
+	}
 	
 }
 
@@ -211,7 +215,9 @@ void FormatText(std::string& text, std::vector <std::string>& substrings, int re
 
 							std::string temp = '{' + std::to_string(indexOfOrigSubstring) + ", " + std::to_string(lengthOfOrigSubstirng) + '}';
 							bool isReplacePossible = true;
-							for (size_t l = 0; l < lengthOfOrigSubstirng; l++) if (text[l + indexOfOrigSubstring] == '{' or text[l + indexOfOrigSubstring] == '}') isReplacePossible = false;
+							for (size_t l = 0; l < lengthOfOrigSubstirng; l++) if (text[l + indexOfOrigSubstring] == 
+								'{' or text[l + indexOfOrigSubstring] == '}') isReplacePossible = false;
+
 							if (isReplacePossible) 
 							{
 								ReplaceText(text, k, lengthOfOrigSubstirng, temp);
@@ -240,6 +246,7 @@ int RestoreText(std::string& text)
 		int index = 0;
 		int length = 0;
 
+		/*
 		if (text[i] == '{') 
 		{
 			temp = "";
@@ -272,7 +279,7 @@ int RestoreText(std::string& text)
 
 				try 
 				{
-					index = stoi(temp.c_str());
+					index = std::stoi(temp.c_str());
 				}
 				catch (invalid_argument) 
 				{
@@ -309,12 +316,13 @@ int RestoreText(std::string& text)
 				temp = "";
 				for (size_t k = 0; k < length; k++) temp += copyOfText[k + index];
 				//cout << temp << endl;
+				*/
+
 				ReplaceText(text, i, borderPos - i + 1, temp);
 				temp = "";
-			}
-		}
+			//}
+		//}
 	}
-	return 0;
 }
 
 
