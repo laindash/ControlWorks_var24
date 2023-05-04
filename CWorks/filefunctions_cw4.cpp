@@ -4,6 +4,7 @@
 #include <iostream>
 #include "cw4_functions.h"
 
+
 bool IsDataCorrectCW4(std::ifstream& file) //The function checks if the data loaded from the file is valid
 {
     std::string test_string{};
@@ -72,15 +73,17 @@ void GetTextFromFile(std::string& text, std::string& path)
 
     while (!file.eof())
     {
-        GetLine(file, input, WITH_DIGITS, FILE_INPUT);
-        text += input;
+        GetLine(file, input, CW4_INPUT, FILE_INPUT);
+        text += (input);
+        if (!file.eof())
+            text += '\n';
     }
 
     std::cout << "Текст загружен!" << std::endl;
     file.close();
 }
 
-void SaveToFile(std::vector<std::string>& strings, std::vector<std::string>& changedStrings, int save_choice)
+void SaveToFile(const std::string& restoredText, const std::string& modifiedText, int save_choice)
 {
     std::ofstream file;
     std::string path{};
@@ -120,24 +123,10 @@ void SaveToFile(std::vector<std::string>& strings, std::vector<std::string>& cha
 
 
     if (save_choice == SAVE_RESTORED)
-    {
-        for (std::vector<std::string>::iterator it = strings.begin(); it != strings.end(); it++)
-        {
-            file << (*it);
-            if (!(it == strings.end() - 1))
-                file << std::endl;
-        }
-    }
+        file << restoredText;
 
     else if (save_choice == SAVE_MODIFIED)
-    {
-        for (std::vector<std::string>::iterator it = changedStrings.begin(); it != changedStrings.end(); it++)
-        {
-            file << (*it);
-            if (!(it == changedStrings.end() - 1))
-                file << std::endl;
-        }
-    }
+        file << modifiedText;
 
     std::cout << "Успешно сохранено в " << path << std::endl;
 }

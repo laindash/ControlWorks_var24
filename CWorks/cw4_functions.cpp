@@ -3,9 +3,20 @@
 #include <regex>
 
 
-void MakeListOfSubstrings(std::vector <std::string>& substrings, std::string& text) 
+bool IsTextRestored(const std::string& text)
 {
-	std::string temp = "";
+	std::regex pattern(".*((\\{)\\s*(\\d+),\\s*(\\d+)\\s*(\\})).*");
+	bool isTextRestored = true;
+
+	if (std::regex_search(text, pattern))
+		isTextRestored = false;
+
+	return isTextRestored;
+}
+
+void MakeListOfSubstrings(std::vector<std::string>& substrings, std::string& text) 
+{
+	std::string temp{};
 	for (size_t pos = 0; pos < text.size(); pos++) 
 	{
 		for (size_t size = 0; size < text.size(); size++) 
@@ -22,7 +33,7 @@ void MakeListOfSubstrings(std::vector <std::string>& substrings, std::string& te
 			{
 				for (size_t j = 0; j < temp.size(); j++) 
 				{
-					if (temp[j] == ' ' or temp[j] == '\n' or temp[j] == '\t') 
+					if (temp[j] == ' ' || temp[j] == '\n' || temp[j] == '\t') 
 					{
 						isSubstringContainsSpaces = true;
 						break;
@@ -41,40 +52,6 @@ void MakeListOfSubstrings(std::vector <std::string>& substrings, std::string& te
 	}
 }
 
-void FindAllSubstrings(std::vector<int>& indexes, std::string substring, std::string& text, size_t sizeOfSubstring) 
-{
-	if (substring.size() > sizeOfSubstring) 
-	{
-		for (size_t i = 0; i < text.size(); i++) 
-		{
-			bool stringsAreEqual = true;
-			if (substring[0] == text[i])
-			{
-				for (size_t j = 0; j < substring.size(); j++)
-				{
-					if (i + j > text.size())
-					{
-						stringsAreEqual = false;
-						break;
-					}
-					if (substring[j] != text[i + j])
-						stringsAreEqual = false;
-				}
-				if (stringsAreEqual)
-					indexes.push_back(i);
-			}
-			else
-				stringsAreEqual = false;
-		}
-	}
-
-	for (size_t i = 1; i < indexes.size();) 
-	{
-		if (indexes[i - 1] + substring.size() - 1 == indexes[i])
-			indexes.erase(indexes.begin() + i);
-		else i++;
-	}
-}
 
 void ReplaceText(std::string& text, size_t pos, size_t length, std::string input)
 {
@@ -89,17 +66,17 @@ void ReplaceText(std::string& text, size_t pos, size_t length, std::string input
 	text = temp1 + input + temp2;
 }
 
-void FormatText(std::string& text, std::vector<std::string>& substrings, int reqSubstringLength) 
-{
-	std::string copyOfText = text;
 
+void FormatText(std::string& text, std::vector<std::string>& substrings, size_t substring_size) 
+{
+	substring_size -= 1;
 	for (int i = 0; i < substrings.size(); i++) 
 	{
 		int substringEnteringsCounter(0);
 		size_t indexOfOrigSubstring(0);
 		size_t lengthOfOrigSubstirng = substrings[i].size();
 		size_t previousIndex = 0;
-		if (substrings[i].size() > reqSubstringLength) 
+		if (substrings[i].size() > substring_size) 
 		{
 			for (size_t k = 0; k < text.size(); k++) 
 			{
@@ -128,10 +105,10 @@ void FormatText(std::string& text, std::vector<std::string>& substrings, int req
 							if (k - previousIndex < lengthOfOrigSubstirng)
 								continue;
 
-							std::string temp = '{' + std::to_string(indexOfOrigSubstring) + ", " + std::to_string(lengthOfOrigSubstirng) + '}';
+							std::string temp = '{' + std::to_string(indexOfOrigSubstring+1) + ", " + std::to_string(lengthOfOrigSubstirng) + '}';
 							bool isReplacePossible = true;
-							for (size_t l = 0; l < lengthOfOrigSubstirng; l++) if (text[l + indexOfOrigSubstring] == 
-								'{' || text[l + indexOfOrigSubstring] == '}') isReplacePossible = false;
+							for (size_t l = 0; l < lengthOfOrigSubstirng; l++) 
+								if (text[l + indexOfOrigSubstring] == '{' || text[l + indexOfOrigSubstring] == '}') isReplacePossible = false;
 
 							if (isReplacePossible) 
 							{
@@ -149,169 +126,95 @@ void FormatText(std::string& text, std::vector<std::string>& substrings, int req
 	}
 }
 
+
 void RestoreText(std::string& text) 
 {
-	std::string copyOfText = text;
+	std::regex pattern(".*((\\{)\\s*(\\d+),\\s*(\\d+)\\s*(\\})).*");
+	std::smatch matches{};
 
-	for (size_t i = 0; i < text.size(); i++)
+	while (std::regex_search(text, matches, pattern))
 	{
 		std::string temp{};
-		size_t borderPos(0), sepPos(0), index(0), length(0);
+		size_t index(0), length(0);
+		index = static_cast<size_t>(std::stoi(matches[3].str())-1);
 
-		/*
-		if (text[i] == '{') 
+		if (index > text.size()) 
 		{
-			temp = "";
-			bool isBorderExist = false;
-			bool isSeparatorExist = false;
-			for (int j = i + 1; j < text.size(); j++) 
-			{
-
-				if (text[j] == '{' and isBorderExist == false)
-					i = j;
-
-				if (text[j] == ',') 
-				{
-					isSeparatorExist = true;
-					sepPos = j;
-				}
-
-				if (text[j] == '}') 
-				{
-					isBorderExist = true;
-					borderPos = j;
-					break;
-				}
-			}
-
-			if (isSeparatorExist and isBorderExist) 
-			{
-				for (size_t k = i + 1; k < sepPos; k++)
-					temp += text[k];
-
-				try 
-				{
-					index = std::stoi(temp.c_str());
-				}
-				catch (invalid_argument) 
-				{
-					cout << "Неверный формат специальной сигнатуры в тексте, надо исправить" << endl;
-					return -1;
-				}
-
-				if (index > copyOfText.size()) 
-				{
-					cout << "Специальная сигнатура содержит невозможный индекс, надо исправить." << endl;
-					return -1;
-				}
-				temp = "";
-
-				for (size_t k = sepPos + 1; k < borderPos; k++)
-					temp += text[k];
-
-				try 
-				{
-					length = stoi(temp.c_str());
-				}
-				catch (invalid_argument) 
-				{
-					cout << "Неверный формат специальной сигнатуры в тексте, надо исправить" << endl;
-					return -1;
-				}
-
-				if ((length > text.size()) or (index + length > copyOfText.size())) 
-				{
-					cout << "Специальная сигнатура содержит недопустимую длину." << endl;
-					return -1;
-				}
-
-				temp = "";
-				for (size_t k = 0; k < length; k++) temp += copyOfText[k + index];
-				//cout << temp << endl;
-				*/
-
-				ReplaceText(text, i, borderPos - i + 1, temp);
-				temp = "";
-			//}
-		//}
-	}
-}
-
-
-
-
-bool CheckText(std::string& text, bool& textIsModified) 
-{
-	bool isTextOkay = true;
-	for (size_t i = 0; i < text.size(); i++)
-	{
-		if (text[i] == '{')
-		{
-			for (size_t j = i; j < text.size(); j++)
-			{
-				if (text[j] == '}')
-				{
-					isTextOkay = false;
-					textIsModified = true;
-					break;
-				}
-			}
+			std::cout << "Специальная сигнатура " << matches[1] << " содержит невозможный индекс!" << std::endl;
+			break;
 		}
+
+		length = static_cast<size_t>(std::stoi(matches[4].str()));
+
+		if ((length > text.size()) || (index + length > text.size())) 
+		{
+			std::cout << "Специальная сигнатура " << matches[1] << " содержит недопустимую длину!" << std::endl;
+			break;
+		}
+
+		for (size_t k = 0; k < length; k++) 
+			temp += text[k + index];
+		std::cout << matches.position(2) << ' ' << matches.position(5) << std::endl;
+
+		index = static_cast<size_t>(matches.position(2));
+		length = static_cast<size_t>(matches.position(5) - index + 1);
+		ReplaceText(text, index, length, temp);
 	}
-	return isTextOkay;
 }
 
 
-void StartModify(std::string text, std::vector<std::string>& changedStrings, int substring_size)
+void StartModify(std::string& text, std::string& modifiedText, size_t substring_size)
 {
 	std::vector<std::string> substrings{};
 	MakeListOfSubstrings(substrings, text);
 	FormatText(text, substrings, substring_size);
-	changedStrings.push_back(text);
+	modifiedText = text;
 }
 
-void StartRestore(std::string text, std::vector<std::string>& strings)
+
+void StartRestore(std::string& text, std::string& restoredText)
 {
-	RestoreText(text);
-	strings.push_back(text);
+	if (!IsTextRestored(text))
+		RestoreText(text);
+	restoredText = text;
 }
 
-void SetSubstringSize(int& substring_size)
+
+void SetSubstringSize(size_t& substring_size)
 {
 	std::cout << "Введите минимальную длину подстроки: " << std::endl;
-	substring_size = GetPosInt();
+	substring_size = GetSubstringSize();
 }
+
 
 void InputText(std::string& text)
 {
-	std::cout << "Введите текст. Для окончания ввода введите quit." << std::endl;
+	std::cout << "Введите текст. Введите q чтобы завершить ввод." << std::endl;
 	std::string input{};
-	while (input != "quit")
+	while (input != "q")
 	{
-		GetLine(std::cin, input, WITH_DIGITS, MANUAL_INPUT);
-		if (input != "quit")
-			text += input;
+		GetLine(std::cin, input, CW4_INPUT, MANUAL_INPUT);
+		if (input != "q")
+			text += (input + '\n');
 	}
 }
 
-void ShowRestored(std::vector<std::string>& strings)
+
+void ShowRestored(const std::string& restoredText)
 {
-	std::cout << "Восстановленный(исходный) текст: " << std::endl;
-	std::cout << "----------------------------------------------------------------------------" << std::endl;
-
-	for (std::vector<std::string>::iterator it = strings.begin(); it != strings.end(); it++)
-		std::cout << *it << std::endl;
-
-	std::cout << "----------------------------------------------------------------------------" << std::endl;
+	std::cout 
+		<< "Восстановленный(исходный) текст: " << std::endl
+		<< "----------------------------------------------------------------------------" << std::endl
+		<< restoredText << std::endl
+		<< "----------------------------------------------------------------------------" << std::endl;
 }
 
-void ShowModified(std::vector<std::string>& changedStrings)
+
+void ShowModified(const std::string& modifiedText)
 {
-	std::cout << "Изменённый текст: " << std::endl;
-	std::cout << "----------------------------------------------------------------------------" << std::endl;
-
-	for (std::vector<std::string>::iterator it = changedStrings.begin(); it != changedStrings.end(); it++)
-		std::cout << *it << std::endl;
-
-	std::cout << "----------------------------------------------------------------------------" << std::endl;
+	std::cout 
+		<< "Изменённый текст: " << std::endl
+		<< "----------------------------------------------------------------------------" << std::endl
+		<< modifiedText << std::endl
+		<< "----------------------------------------------------------------------------" << std::endl;
 }

@@ -331,12 +331,9 @@ void StartCW4(void)
     int user_choice{};
     do
     {
-        std::vector<std::string> strings{};
-        std::vector<std::string> changedStrings{};
-        bool textIsModified = false, isSubstringSizeSetted = false;
-        std::string text{};
-        int substring_size = 2;
-        std::string file_path{};
+        std::string restoredText{}, modifiedText{}, text{}, file_path{};
+        bool isSubstringSizeSetted = false, isLoopMenu = false;
+        size_t substring_size = 2;
         UnitTestCW4 tests{};
 
         InfoCW4();
@@ -345,11 +342,13 @@ void StartCW4(void)
         switch (user_choice = GetKey(FILE_INPUT, MODUL_TESTS))
         {
             case FILE_INPUT:
+                isLoopMenu = true;
                 file_path = CheckFileCW4();
                 GetTextFromFile(text, file_path);
                 break;
 
             case MANUAL_INPUT:
+                isLoopMenu = true;
                 InputText(text);
                 break;
 
@@ -361,9 +360,7 @@ void StartCW4(void)
                 break;
         }
 
-        CheckText(text, textIsModified);
-
-        while (user_choice != QUIT && user_choice != MODUL_TESTS)
+        while (isLoopMenu)
         {
             ShowMenuCW4();
             switch (user_choice = GetKey(ENTRY_LENGTH, SAVE_MODIFIED))
@@ -374,33 +371,43 @@ void StartCW4(void)
                     break;
 
                 case SHOW_RESTORED:
-                    if (strings.empty())
-                        StartRestore(text, strings);
-                    ShowRestored(strings);
+                    if (restoredText.empty())
+                        StartRestore(text, restoredText);
+                    ShowRestored(restoredText);
                     break;
 
-                case SHOW_MODIFIED:
-                    if (!changedStrings.empty())
+                case SHOW_MODIFIED:    
+                    if (!isSubstringSizeSetted)
                     {
-                        if (!isSubstringSizeSetted)
-                        {
-                            std::cout << "Размер подстроки взят со стандартным значением = 2" << std::endl;
-                            StartModify(text, changedStrings, substring_size);
-                            textIsModified = true;
-                        }
+                        SetSubstringSize(substring_size);
+                        isSubstringSizeSetted = true;
                     }
-                    ShowModified(changedStrings);
+                    RestoreText(text);
+                    std::cout << "Размер подстроки взят со значением = " << substring_size << std::endl;
+                    StartModify(text, modifiedText, substring_size);
+                    ShowModified(modifiedText);
                     break;
 
                 case SAVE_RESTORED:
-                    SaveToFile(strings, changedStrings, SAVE_RESTORED);
+                    if (restoredText.empty())
+                    {
+                        std::cout << "Сначала восстановите текст!" << std::endl;
+                        break;
+                    }
+                    SaveToFile(restoredText, modifiedText, SAVE_RESTORED);
                     break;
 
                 case SAVE_MODIFIED:
-                    SaveToFile(strings, changedStrings, SAVE_MODIFIED);
+                    if (modifiedText.empty())
+                    {
+                        std::cout << "Сначала модифицируйте текст!" << std::endl;
+                        break;
+                    }
+                    SaveToFile(restoredText, modifiedText, SAVE_MODIFIED);
                     break;
 
                 case QUIT:
+                    isLoopMenu = false;
                     break;
             }
         }

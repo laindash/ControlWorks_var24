@@ -7,7 +7,7 @@
 #include <vector>
 
 template<typename T>
-T GetT(void)
+T GetT()
 {
     T input{};
 
@@ -47,7 +47,7 @@ int GetKey(int key_min, int key_max)
 }
 
 template<typename T>
-T GetPosT(void)
+T GetPosT()
 {
     T num = 0;
     do
@@ -70,38 +70,52 @@ T GetPosT(void)
     return num;
 }
 
-int GetPosInt(void)
+int GetPosInt()
 {
     return GetPosT<int>();
 }
 
-int GetInt(void) 
+size_t GetSubstringSize()
+{
+    size_t size{};
+    do
+    {
+        size = static_cast<size_t>(GetPosT<long long>());
+        if (size < 2)
+            std::cout << "Размер подстроки должен быть >=2" << std::endl;
+    } 
+    while (size < 2);
+
+    return size;
+}
+
+int GetInt() 
 {
     return GetT<int>();
 }
 
-double GetDouble(void)
+double GetDouble()
 {
     return GetT<double>();
 }
 
 
-double GetPosDouble(void)
+double GetPosDouble()
 {
     return GetPosT<double>();
 }
 
-long long GetPosLongLong(void)
+long long GetPosLongLong()
 {
     return GetPosT<long long>();
 }
 
-long long GetLongLong(void)
+long long GetLongLong()
 {
     return GetT<long long>();
 }
 
-bool GetBool(void)
+bool GetBool()
 {
     return GetT<bool>();
 }
@@ -142,29 +156,32 @@ std::string GetLine(std::istream& _Input, std::string& line, int num_exists, int
             continue;
         }
 
-        int space_position(0);
-        int character_position(0);
-        for (const unsigned char c : line)  //checking that a string does not start with spaces
+        if (num_exists != CW4_INPUT)
         {
-            if (!iswprint(c))
+            int space_position(0);
+            int character_position(0);
+            for (const unsigned char c : line)  //checking that a string does not start with spaces
             {
-                validInput = false;
-                std::cout << "Вводимое значение не должно содержать непечатные символы!" << std::endl;
-                break;
-            }
-            if (c == ' ')
-                space_position++;
-            if (c != ' ')
-                character_position++;
-            if (space_position > character_position)
-            {
-                validInput = false;
-                std::cout << "Вводимое значение не должно начинаться с пробела!" << std::endl;
+                if (!iswprint(c))
+                {
+                    validInput = false;
+                    std::cout << "Вводимое значение не должно содержать непечатные символы!" << std::endl;
+                    break;
+                }
+                if (c == ' ')
+                    space_position++;
+                if (c != ' ')
+                    character_position++;
+                if (space_position > character_position)
+                {
+                    validInput = false;
+                    std::cout << "Вводимое значение не должно начинаться с пробела!" << std::endl;
 
-                break;
+                    break;
+                }
+                else
+                    validInput = true;
             }
-            else
-                validInput = true;
         }
 
         if (num_exists == WITHOUT_DIGITS)

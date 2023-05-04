@@ -4,6 +4,6 @@
 bool IsDataCorrectCW4(std::ifstream& file);
 std::string CheckFileCW4();
 void GetTextFromFile(std::string& text, std::string& path);
-void SaveToFile(std::vector<std::string>& strings, std::vector<std::string>& changedStrings, int save_choice);
+void SaveToFile(const std::string& restoredText, const std::string& modifiedText, int save_choice);
 
 #endif

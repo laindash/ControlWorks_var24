@@ -45,7 +45,8 @@ enum BoolInput
     WITHOUT_DIGITS,
     WITH_DIGITS,
     ONLY_DIGITS,
-    ALMOST_ALL_DIGITS
+    ALMOST_ALL_DIGITS,
+    CW4_INPUT
 };
 
 enum MainMenuCW1
@@ -120,6 +121,7 @@ enum SORTS
 int GetKey(int key_min, int key_max);
 
 int GetPosInt();
+size_t GetSubstringSize();
 int GetInt();
 int GetRandInt(int lowBound, int upBound);
 
