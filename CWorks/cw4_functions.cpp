@@ -136,11 +136,11 @@ void RestoreText(std::string& text)
 	{
 		std::string temp{};
 		size_t index(0), length(0);
-		index = static_cast<size_t>(std::stoi(matches[3].str())-1);
+		index = static_cast<size_t>(std::stoi(matches[3].str())) - 1;
 
 		if (index > text.size()) 
 		{
-			std::cout << "Специальная сигнатура " << matches[1] << " содержит невозможный индекс!" << std::endl;
+			std::cout << "Специальная сигнатура " << matches[1] << " содержит невозможный индекс! Перезапустите программу." << std::endl;
 			break;
 		}
 
@@ -148,7 +148,7 @@ void RestoreText(std::string& text)
 
 		if ((length > text.size()) || (index + length > text.size())) 
 		{
-			std::cout << "Специальная сигнатура " << matches[1] << " содержит недопустимую длину!" << std::endl;
+			std::cout << "Специальная сигнатура " << matches[1] << " содержит недопустимую длину! Перезапустите программу." << std::endl;
 			break;
 		}
 
