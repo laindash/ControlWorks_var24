@@ -154,7 +154,6 @@ void RestoreText(std::string& text)
 
 		for (size_t k = 0; k < length; k++) 
 			temp += text[k + index];
-		std::cout << matches.position(2) << ' ' << matches.position(5) << std::endl;
 
 		index = static_cast<size_t>(matches.position(2));
 		length = static_cast<size_t>(matches.position(5) - index + 1);
