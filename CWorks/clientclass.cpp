@@ -22,7 +22,7 @@ void Client::SetAddress(void)
 {
     std::cout << "¬ведите название города: ";
     GetLine(std::cin, _address.city, WITH_DIGITS, MANUAL_INPUT);
-    std::cout << "¬ведите название нлицы: ";
+    std::cout << "¬ведите название улицы: ";
     GetLine(std::cin, _address.street, WITH_DIGITS, MANUAL_INPUT);
 
     std::cout << "¬ведите номер дома: ";
