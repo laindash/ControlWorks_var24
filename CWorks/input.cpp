@@ -153,7 +153,6 @@ std::string GetLine(std::istream& _Input, std::string& line, int num_exists, int
         if (line.empty() && isInput != FILE_INPUT)
         {
             std::cout << "¬водимое значение не должно быть пустым!" << std::endl;
-            validInput = false;
             continue;
         }
 

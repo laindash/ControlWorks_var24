@@ -44,7 +44,7 @@
 
 int main(void) 
 {
-	srand(static_cast<unsigned int>(time(nullptr)));
+	srand(static_cast<unsigned int>(time(NULL)));
 	SetConsoleCP(1251);
 	SetConsoleOutputCP(1251);
 
